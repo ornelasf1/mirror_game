@@ -32,8 +32,7 @@ public class UIInventoryItem : MonoBehaviour, IDragHandler, IBeginDragHandler, I
         EventSystem.current.RaycastAll(eventData, results);
         RaycastResult raycastResult = results.Find(res => res.gameObject.CompareTag("Inventory"));
         if (raycastResult.gameObject == null) {
-            Debug.Log($"Spawn {mirror.preFab.name} under {transform.root.name}");
-            Instantiate(mirror.preFab, transform.root.parent, true);
+            Instantiate(mirror.preFab, eventData.pointerDrag.transform.position, Quaternion.identity, transform.root.parent);
             Destroy(transform.gameObject);
         }
         

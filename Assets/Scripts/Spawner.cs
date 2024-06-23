@@ -1,33 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Unity.VisualStudio.Editor;
 using UnityEngine;
 
-struct ScreenBounds
-{
-    public float left;
-    public float right;
-    public float top;
-    public float bottom;
-}
 
 public class Spawner : MonoBehaviour
 {
     public GameObject enemy;
-    private ScreenBounds bounds;
 
     private float elapsedTime = 0f;
 
     private float spawnPerSecond = 2f;
 
+    private RectTransform spawnZone;
+
     void Start() {
-        Vector3 bottomLeft = Camera.main.ViewportToWorldPoint(new Vector3(0.05f, 0.05f));
-        Vector3 topRight = Camera.main.ViewportToWorldPoint(new Vector3(0.95f, 0.8f)); // a little off the top to avoid the topmost canvas
-        bounds = new ScreenBounds {
-            left = bottomLeft.x,
-            right = topRight.x,
-            bottom = bottomLeft.y,
-            top = topRight.y
-        };
+        spawnZone = GetComponent<RectTransform>();
     }
 
     // Update is called once per frame
@@ -39,10 +27,12 @@ public class Spawner : MonoBehaviour
         elapsedTime += Time.deltaTime;
         if (elapsedTime > spawnPerSecond) {
             elapsedTime = 0f;
-
-            float yPos = Random.Range(bounds.bottom, bounds.top);
-            float xPos = Random.Range(bounds.left, bounds.right);
-            Instantiate(enemy, new Vector3(xPos, yPos, 0f), Quaternion.identity);
+            
+            float yPos = Random.Range(spawnZone.rect.yMin, spawnZone.rect.yMax);
+            float xPos = Random.Range(spawnZone.rect.xMin, spawnZone.rect.xMax);
+            Vector3 newWorldPoint = spawnZone.TransformPoint(new Vector3(xPos, yPos, -1f));
+            newWorldPoint.z = -1f;
+            Instantiate(enemy, newWorldPoint, Quaternion.identity);
         }
     }
 }
