@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8768040251734690392}
   - component: {fileID: 1522511004121252018}
   - component: {fileID: 2260729999412918641}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Fill
   m_TagString: EnemyHealth
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 7176482906937189415}
   - component: {fileID: 4603533832175688567}
   - component: {fileID: 9079088047796846913}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Border  - end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,7 +159,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8620761151139626881}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Health Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,7 +200,7 @@ GameObject:
   - component: {fileID: 4095313167707257533}
   - component: {fileID: 6888056639462743715}
   - component: {fileID: 7779804405247932814}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -365,7 +365,7 @@ GameObject:
   - component: {fileID: 3048171242647604486}
   - component: {fileID: 6874216834025046900}
   - component: {fileID: 5669396612584735356}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -466,7 +466,7 @@ GameObject:
   - component: {fileID: 7615076761075890622}
   - component: {fileID: 6353433881569165311}
   - component: {fileID: 944543862885176331}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Border - start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
