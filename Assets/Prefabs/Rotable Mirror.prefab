@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 3233745652991418178}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.3212494, w: 0.9469946}
-  m_LocalPosition: {x: -31.02, y: -10.95, z: 0}
+  m_LocalPosition: {x: -31.02, y: -10.95, z: -2}
   m_LocalScale: {x: 2.4953, y: 2.8611, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -145,9 +145,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mirror: {fileID: 11400000, guid: e714ec1d6dc93a14c84f8b5b8b97474f, type: 2}
-  layerToSnapTo:
-    serializedVersion: 2
-    m_Bits: 1024
 --- !u!1 &4544063029250922408
 GameObject:
   m_ObjectHideFlags: 0
