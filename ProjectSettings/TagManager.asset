@@ -8,6 +8,8 @@ TagManager:
   - UserHealth
   - EnemyHealth
   - GameManager
+  - InventoryCell
+  - Inventory
   layers:
   - Default
   - TransparentFX
@@ -19,8 +21,8 @@ TagManager:
   - IgnoreLaser
   - RotateCollider
   - DragObjectCollider
-  - 
-  - 
+  - InventoryGrid
+  - Item
   - 
   - 
   - 
@@ -44,4 +46,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background Layer
+    uniqueID: 668043011
+    locked: 0
+  - name: Middle Layer
+    uniqueID: 2502472573
+    locked: 0
+  - name: Foreground Layer
+    uniqueID: 80086419
     locked: 0

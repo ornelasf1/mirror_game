@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4e8e109aef6e9e4887d9981fa32ede9, type: 3}
   m_Name: Mirror
   m_EditorClassIdentifier: 
-  preFab: {fileID: 0}
-  type: 0
+  preFab: {fileID: 3233745652991418178, guid: f9129be163092da44b93df8329e5b7fc, type: 3}
+  inventoryImage: {fileID: 6433554953413943737, guid: 7d5b481c93b8599418df7935e79c08bf, type: 3}
+  type: 1
   description: 

@@ -6,9 +6,9 @@ using UnityEngine.EventSystems;
 
 public class DragAndSnapObject : MonoBehaviour
 {
+    public ItemObject mirror;
     private bool dragging = false;
     private Vector3 offset;
-    [SerializeField] private LayerMask layerToSnapTo;
 
     // Start is called before the first frame update
     void Start()
@@ -48,28 +48,24 @@ public class DragAndSnapObject : MonoBehaviour
         UIImages images = UIRaycast(Helpers.ScreenPosToPointerData(Input.mousePosition));
         if (images.uiInventoryCell != null)
         {
-            InventoryCell inventoryCell = images.uiInventoryCell.GetComponent<InventoryCell>();
-            if (inventoryCell != null && !inventoryCell.HasItem())
+            UIInventoryCell inventoryCell = images.uiInventoryCell.GetComponent<UIInventoryCell>();
+            if (inventoryCell != null)
             {
                 Debug.Log($"Cell: Place {transform.name} at {images.uiInventoryCell.transform.name}");
-                // Vector3 newPos = images.uiInventoryCell.transform.position;
-                // newPos.z = transform.position.z;
-                // transform.position = newPos;
-                inventoryCell.AddItem(this.gameObject);
+                inventoryCell.AddItemToSlot(mirror.inventoryImage);
+                Destroy(transform.gameObject);
             }
         } else if (images.uiInventory != null)
         {
             for (int i = 0; i < images.uiInventory.transform.childCount; i++)
             {
                 Transform childTransform = images.uiInventory.transform.GetChild(i);
-                InventoryCell inventoryCell = childTransform.GetComponent<InventoryCell>();
-                if (inventoryCell != null && !inventoryCell.HasItem())
+                UIInventoryCell inventoryCell = childTransform.GetComponent<UIInventoryCell>();
+                if (inventoryCell != null && inventoryCell.transform.childCount == 0)
                 {
                     Debug.Log($"Inv: Place {transform.name} at {childTransform.name}");
-                    // Vector3 newPos = childTransform.position;
-                    // newPos.z = transform.position.z;
-                    // transform.position = newPos;
-                    inventoryCell.AddItem(this.gameObject);
+                    inventoryCell.AddItemToSlot(mirror.inventoryImage);
+                    Destroy(transform.gameObject);
                     break;
                 }
             }
