@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 6848095814071973936}
   - component: {fileID: 8962472973466311308}
   - component: {fileID: 3563951962138805643}
-  m_Layer: 11
-  m_Name: Rotable Mirror
+  m_Layer: 0
+  m_Name: Square_Mirror
   m_TagString: Reflective
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 626f05b4ca7403043a09d9e163fead7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mirror: {fileID: 11400000, guid: e714ec1d6dc93a14c84f8b5b8b97474f, type: 2}
+  mirror: {fileID: 11400000, guid: 29d8d5bf0278f084fb3b2f54b584d73e, type: 2}
 --- !u!1 &4544063029250922408
 GameObject:
   m_ObjectHideFlags: 0

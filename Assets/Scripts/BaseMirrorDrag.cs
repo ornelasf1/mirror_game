@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DragAndSnapObject : MonoBehaviour
+public class BaseMirrorDrag : MonoBehaviour
 {
     public ItemObject mirror;
     private bool dragging = false;

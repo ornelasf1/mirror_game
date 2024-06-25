@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4e8e109aef6e9e4887d9981fa32ede9, type: 3}
-  m_Name: Mirror
+  m_Script: {fileID: 11500000, guid: 7594bff44889bde4ea5edc52eab37941, type: 3}
+  m_Name: HalfCircleMirror
   m_EditorClassIdentifier: 
-  preFab: {fileID: 3233745652991418178, guid: f9129be163092da44b93df8329e5b7fc, type: 3}
-  inventoryImage: {fileID: 6433554953413943737, guid: 7d5b481c93b8599418df7935e79c08bf, type: 3}
+  preFab: {fileID: 342042314464566051, guid: a5e3f94e20136994baa4a6f8b021d0af, type: 3}
+  inventoryImage: {fileID: 2150909487832884051, guid: cd16e0b78ea818c4ca98247231710db5, type: 3}
   type: 1
   description: 
+  mirrorType: 1

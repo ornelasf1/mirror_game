@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ public class Enemy : MonoBehaviour
 {
     public Gradient gradient;
     SpriteRenderer spriteRenderer;
+    [HideInInspector] public TextMeshProUGUI scoreTMP;
     private readonly int maxHealth = 100;
     private float currentHealth;
     private readonly float healthDamageMultiplier = 100f;
@@ -15,9 +17,10 @@ public class Enemy : MonoBehaviour
     public int bombDamage = 5;
     private HealthBar userHealthBar;
     private Transform enemyHealthBar;
-    private readonly float secondsTilExplosion = 10f;
     private readonly float disappearHealthBarInSeconds = 1f;
     private float disappearHealthBarElapsed = 0f;
+    private int gainPointsPerSecond = 10;
+    private int pointsForKilling = 5;
 
     void Start() {
         currentHealth = maxHealth;
@@ -31,7 +34,7 @@ public class Enemy : MonoBehaviour
     }
 
     void Update() {
-        if (!GameManager.Instance.IsGameActive()) return;
+        if (!GameStateManager.Instance.IsGameActive()) return;
         CountDownEnemyBombTimer();
         CheckIfHealthBarDepleted();
         
@@ -58,7 +61,7 @@ public class Enemy : MonoBehaviour
             userHealthBar.DealDamage(bombDamage);
             Destroy(gameObject);
         } else {
-            bombTimer -= Time.deltaTime / secondsTilExplosion; // reaches 0f in 10 seconds, Time.deltaTime * 0.1f
+            bombTimer -= Time.deltaTime / GameStateManager.Instance.LevelData.SecondsTilFoeDetonates; // reaches 0f in 10 seconds, Time.deltaTime * 0.1f
             spriteRenderer.color = gradient.Evaluate(bombTimer);
         }
     }
@@ -66,13 +69,16 @@ public class Enemy : MonoBehaviour
     private void CheckIfHealthBarDepleted() {
         if (currentHealth <= 0) {
             Destroy(gameObject);
-            GameManager.Instance.IncreaseKill();
+            GameStateManager.Instance.IncreaseKill();
+            GameStateManager.Instance.IncreaseScore(pointsForKilling);
+            GameStateManager.Instance.LevelData.FoeDied();
         }
     }
 
     public void DealDamage(int amount) {
         if (currentHealth > 0) {
             currentHealth -= amount * healthDamageMultiplier * Time.deltaTime;
+            GameStateManager.Instance.IncreaseScore(Time.deltaTime * gainPointsPerSecond);
             if (enemyHealthBar) {
                 enemyHealthBar.transform.parent.gameObject.SetActive(true);
                 enemyHealthBar.localScale = new Vector3(currentHealth / maxHealth, enemyHealthBar.localScale.y, enemyHealthBar.localScale.z);

@@ -7,9 +7,8 @@ public class Shooter : MonoBehaviour
     public int speed = 100;
 
     public Material material;
-    [SerializeField] private LayerMask layerThatIgnoresLaser;
-
     public HealthBar healthBar;
+    [SerializeField] private LayerMask layerThatIgnoresLaser;
 
     void Start() {
         Vector3 laserStartPosition = Camera.main.ViewportToWorldPoint(new Vector3(1, 0.7f, 0));
@@ -19,7 +18,7 @@ public class Shooter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.Instance.IsGameActive()) {
+        if (!GameStateManager.Instance.IsGameActive()) {
             return;
         }
         // if (Input.GetKey(KeyCode.A))

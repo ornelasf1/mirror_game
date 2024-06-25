@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7594bff44889bde4ea5edc52eab37941, type: 3}
+  m_Name: SquareMirror
+  m_EditorClassIdentifier: 
+  preFab: {fileID: 3233745652991418178, guid: f9129be163092da44b93df8329e5b7fc, type: 3}
+  inventoryImage: {fileID: 6433554953413943737, guid: 7d5b481c93b8599418df7935e79c08bf, type: 3}
+  type: 1
+  description: 
+  mirrorType: 0

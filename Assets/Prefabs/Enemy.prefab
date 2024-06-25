@@ -317,7 +317,8 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  bombDamage: 10
+  bombDamage: 1
+  textMeshPro: {fileID: 0}
 --- !u!58 &7779804405247932814
 CircleCollider2D:
   m_ObjectHideFlags: 0

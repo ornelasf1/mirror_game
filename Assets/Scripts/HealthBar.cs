@@ -15,7 +15,7 @@ public class HealthBar : MonoBehaviour
     }
 
     public void Update() {
-        if (!GameManager.Instance.IsGameActive()) {
+        if (!GameStateManager.Instance.IsGameActive()) {
             return;
         }
         CheckHealthBarEmpty();

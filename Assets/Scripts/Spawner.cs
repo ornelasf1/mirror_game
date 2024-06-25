@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Unity.VisualStudio.Editor;
+using TMPro;
 using UnityEngine;
 
 
@@ -10,36 +11,42 @@ public class Spawner : MonoBehaviour
 
     private float elapsedTime = 0f;
 
-    private float spawnPerSecond = 2f;
-
     private RectTransform spawnZone;
+    [SerializeField] private TextMeshProUGUI scoreTMP;
 
     void Start() {
         spawnZone = GetComponent<RectTransform>();
+        UpdateScore(0);
+        GameStateManager.Instance.onNewScore += UpdateScore;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.Instance.IsGameActive()) {
+        if (!GameStateManager.Instance.IsGameActive()) {
             return;
         }
         elapsedTime += Time.deltaTime;
-        if (elapsedTime > spawnPerSecond) {
+        if (elapsedTime > GameStateManager.Instance.LevelData.IntervalForFoeSpawnInMs / 1000f) {
             elapsedTime = 0f;
-
-            for (int retries = 0; retries < 3; retries++)
+            for (int spawnCount = 0; spawnCount < Random.Range(1, GameStateManager.Instance.LevelData.MaxNumberOfFoesToSpawnAtOnce + 1); spawnCount++)
             {
-                float yPos = Random.Range(spawnZone.rect.yMin, spawnZone.rect.yMax);
-                float xPos = Random.Range(spawnZone.rect.xMin, spawnZone.rect.xMax);
-                Vector3 newWorldPoint = spawnZone.TransformPoint(new Vector3(xPos, yPos, -1f));
-                newWorldPoint.z = -1f;
-                if (!Physics2D.OverlapCircle(newWorldPoint, 2.5f, 1 << LayerMask.NameToLayer("Foe"))) {
-                    Instantiate(enemy, newWorldPoint, Quaternion.identity);
-                    break;
+                for (int retries = 0; retries < 3; retries++)
+                {
+                    float yPos = Random.Range(spawnZone.rect.yMin, spawnZone.rect.yMax);
+                    float xPos = Random.Range(spawnZone.rect.xMin, spawnZone.rect.xMax);
+                    Vector3 newWorldPoint = spawnZone.TransformPoint(new Vector3(xPos, yPos, -1f));
+                    newWorldPoint.z = -1f;
+                    if (!Physics2D.OverlapCircle(newWorldPoint, 2.5f, 1 << LayerMask.NameToLayer("Foe"))) {
+                        Instantiate(enemy, newWorldPoint, Quaternion.identity);
+                        break;
+                    }
                 }
             }
-
         }
+    }
+
+    private void UpdateScore(int newScore) {
+        scoreTMP.text = $"Score {newScore}";
     }
 }

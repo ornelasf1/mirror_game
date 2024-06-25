@@ -22,7 +22,7 @@ public class DragLaser : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.Instance.IsGameActive()) return;
+        if (!GameStateManager.Instance.IsGameActive()) return;
         if (dragging)
         {
             // Move object, taking into account original offset.

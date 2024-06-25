@@ -1,31 +1,27 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public GameData gameData = new()
+    [SerializeField] private TextMeshProUGUI levelTMP;
+    // Start is called before the first frame update
+    void Start()
     {
-        EnemyKills = 0,
-        IsGameActive = true,
-    };
-    public static GameManager Instance { get; private set; }
-
-    void Awake() {
-        if (Instance != null && Instance != this) {
-            Destroy(this);
-        } else {
-            Instance = this;
-        }
         
     }
 
-    public void IncreaseKill() {
-        gameData.EnemyKills++;
+    // Update is called once per frame
+    void Update()
+    {
+        checkIfFoesDefeated();
     }
 
-    public bool IsGameActive() {
-        return gameData.IsGameActive;
+    private void checkIfFoesDefeated() {
+        if (GameStateManager.Instance.LevelData.RemainingFoes <= 0) {
+            GameStateManager.Instance.LevelData.AdvanceToNextLevel();
+            levelTMP.text = $"Level {GameStateManager.Instance.LevelData.ActiveLevel}";
+        }
     }
 }
