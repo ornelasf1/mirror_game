@@ -16,10 +16,13 @@ public class MapWalker {
 
     private const int maxNumberOfUnitsToWalkPerWall = 20;
     private int UnitsWalkedSoFar = 0;
-    private float chanceToChangeDirection = 0.5f;
-    private float ChanceToBeginWalking = 0.05f;
+    private float ChanceToBeginWalking = 0.1f;
     private Direction? LastDirection = null;
     private List<(int, int)> WallPositions = new();
+    private const int minSizeOfWall = 6;
+    private const int maxSizeOfWall = 16;
+    private int RemainingWallUnits = 0;
+    private readonly int WallProximityRadius = 4;
 
     public MapWalker(int mapWidth, int mapHeight) {
         this.mapWidth = mapWidth;
@@ -43,6 +46,7 @@ public class MapWalker {
             if (UnitsWalkedSoFar < maxNumberOfUnitsToWalkPerWall) {
                 throw new InvalidOperationException($"Did not meet quota. {UnitsWalkedSoFar}/{maxNumberOfUnitsToWalkPerWall}");
             }
+            WallPositions.ForEach(pos => {Grid[pos.Item1][pos.Item2] = 1;});
         }
         catch (InvalidOperationException msg){
             Debug.Log(msg);
@@ -50,13 +54,18 @@ public class MapWalker {
         }
         finally {
             UnitsWalkedSoFar = 0;
+            RemainingWallUnits = 0;
             WallPositions.Clear();
             LastDirection = null;
         }
     }
 
     private bool BeginWalking(int x, int y) {
-        if (Grid[x][y] == 1) {
+        if (!IsInBounds(x, y)) {
+            throw new InvalidOperationException($"Went out of bounds {x} {y}");
+        }
+
+        if (!CheckGridProximity(x, y)) {
             Debug.Log($"Step back from {x},{y}");
             return false;
         }
@@ -67,58 +76,30 @@ public class MapWalker {
         if (IsInCornerBounds(x, y)) {
             throw new InvalidOperationException($"Ended up in corner bounds {x} {y}");
         }
-
-        if (!IsInBounds(x, y)) {
-            throw new InvalidOperationException($"Went out of bounds {x} {y}");
-        }
         
-        Direction direction;
-        if (IsInBottomBounds(x, y)) {
-            abortEarlyIfUnlucky();
-            direction = Direction.UP;
-        } else if (IsInLeftBounds(x, y)) {
-            abortEarlyIfUnlucky();
-            direction = Direction.RIGHT;
-        } else if (IsInRightBounds(x, y)) {
-            abortEarlyIfUnlucky();
-            direction = Direction.LEFT;
-        } else if (IsInTopBounds(x, y)) {
-            abortEarlyIfUnlucky();
-            direction = Direction.DOWN;
-        } else {
-            direction = ChooseDirection();
-        }
+        Direction direction = GetDirection(x, y);
+        LastDirection = direction;
+        
         Walk(x, y, direction);
         return true;
     }
 
     public void Walk(int x, int y, Direction direction) {
         UnitsWalkedSoFar++;
-        Grid[x][y] = 1;
+        Grid[x][y] = 2;
         WallPositions.Add((x, y));
         Debug.Log($"Set unit in {x},{y}. Go {direction}");
-        bool foundNextSpot = false;
-        Direction newDirection = direction;
-        var directionsToAttempt = new List<Direction>((Direction[])Enum.GetValues(typeof(Direction)));
-        while(!foundNextSpot) {
-            if (newDirection == Direction.UP) {
-                foundNextSpot = BeginWalking(x, y+1);
-            }
-            if (newDirection == Direction.RIGHT) {
-                foundNextSpot = BeginWalking(x+1, y);
-            }
-            if (newDirection == Direction.DOWN) {
-                foundNextSpot = BeginWalking(x, y-1);
-            }
-            if (newDirection == Direction.LEFT) {
-                foundNextSpot = BeginWalking(x-1, y);
-            }
-            if (!foundNextSpot && directionsToAttempt.Count != 0) {
-                newDirection = directionsToAttempt[UnityEngine.Random.Range(0, directionsToAttempt.Count)];
-                directionsToAttempt.Remove(newDirection);
-            } else {
-                break;
-            }
+        if (direction == Direction.UP) {
+            BeginWalking(x, y+1);
+        }
+        if (direction == Direction.RIGHT) {
+            BeginWalking(x+1, y);
+        }
+        if (direction == Direction.DOWN) {
+            BeginWalking(x, y-1);
+        }
+        if (direction == Direction.LEFT) {
+            BeginWalking(x-1, y);
         }
     }
 
@@ -129,21 +110,61 @@ public class MapWalker {
         return true;
     }
 
-    private Direction ChooseDirection() {
-        float value = UnityEngine.Random.Range(0f, 1f);
-        if (value >= 0.75f) {
-            return Direction.UP;
-        } else if(value >= 0.5f) {
-            return Direction.LEFT;
-        } else if(value >= 0.25f) {
-            return Direction.RIGHT;
+    private Direction GetDirection(int x, int y) {
+        if (RemainingWallUnits == 0) {
+            RemainingWallUnits = UnityEngine.Random.Range(minSizeOfWall, maxSizeOfWall);
+            if (IsInBottomBounds(x, y)) {
+                return Direction.UP;
+            } else if (IsInLeftBounds(x, y)) {
+                return Direction.RIGHT;
+            } else if (IsInRightBounds(x, y)) {
+                return Direction.LEFT;
+            } else if (IsInTopBounds(x, y)) {
+                return Direction.DOWN;
+            } else {
+                return GetRandomDirection();
+            }
         } else {
-            return Direction.DOWN;
+            RemainingWallUnits--;
+            return LastDirection == null ? GetRandomDirection() : (Direction)LastDirection;
         }
     }
 
+     private Direction GetRandomDirection() {
+        Direction? newDireciton = LastDirection;
+        while (newDireciton == LastDirection) {
+            float value = UnityEngine.Random.Range(0f, 1f);
+
+            if (value >= 0.75f) {
+                newDireciton = Direction.UP;
+            } else if(value >= 0.5f) {
+                newDireciton = Direction.LEFT;
+            } else if(value >= 0.25f) {
+                newDireciton = Direction.RIGHT;
+            } else {
+                newDireciton = Direction.DOWN;
+            }
+        }
+        return (Direction)newDireciton;
+    }
+    private bool CheckGridProximity(int x, int y) {
+        for (int i = -WallProximityRadius; i <= WallProximityRadius; i++)
+        {
+            for (int j = -WallProximityRadius; j <= WallProximityRadius; j++)
+            {
+                if (!IsInBounds(i+x, j+y)) {
+                    continue;
+                }
+                if (Grid[i+x][j+y] == 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private bool IsInBounds(int x, int y) {
-        return x >= 0 && x <= mapWidth && y >= 0 && y <= mapHeight;
+        return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
     }
 
     private bool IsInInnerBounds(int x, int y) {
