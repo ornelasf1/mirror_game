@@ -6,7 +6,7 @@ using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
     public GameObject wallUnit;
-    private readonly int GridSize = 100;
+    private readonly int GridSize = 60;
 
     private float cellWidth;
     private float cellHeight;
@@ -24,6 +24,18 @@ public class MapGenerator : MonoBehaviour
         wallUnit.transform.localPosition = pos;
         mapWalker = new MapWalker(GridSize, GridSize);
         initializeGrid();
+        wallUnit.transform.localScale = new Vector3(cellWidth, cellHeight, 1);
+        for (int i = 0; i < mapWalker.Grid.Length; i++)
+        {
+            for (int j = 0; j < mapWalker.Grid[i].Length; j++)
+            {
+                if (mapWalker.Grid[i][j] == 1) {
+                    Debug.Log($"Spawn at x:{(i+1) * cellWidth} y:{(j+1) * cellHeight}");
+                    Vector3 wallPos = new Vector3((i+1) * cellWidth, (j+1) * cellHeight, 0);
+                    Instantiate(wallUnit, transform.TransformPoint(wallPos), Quaternion.identity, transform);
+                }
+            }
+        }
     }
 
     // Update is called once per frame
@@ -58,7 +70,7 @@ public class MapGenerator : MonoBehaviour
             {
                 line += $"{mapWalker.Grid[i][j]}" + (j == mapWalker.Grid[i].Length - 1 ? "" : ",");
             }
-            result += (line + "|");
+            result += line + "|";
         }
         Debug.Log(result);
     }

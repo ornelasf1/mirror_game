@@ -20,9 +20,9 @@ public class MapWalker {
     private Direction? LastDirection = null;
     private List<(int, int)> WallPositions = new();
     private const int minSizeOfWall = 6;
-    private const int maxSizeOfWall = 16;
+    private const int maxSizeOfWall = 20;
     private int RemainingWallUnits = 0;
-    private readonly int WallProximityRadius = 4;
+    private readonly int WallProximityRadius = 15;
 
     public MapWalker(int mapWidth, int mapHeight) {
         this.mapWidth = mapWidth;
@@ -103,13 +103,6 @@ public class MapWalker {
         }
     }
 
-    private bool CheckIfNextStepIsValid(int x, int y) {
-        if (Grid[x][y] == 1) {
-            return false;
-        }
-        return true;
-    }
-
     private Direction GetDirection(int x, int y) {
         if (RemainingWallUnits == 0) {
             RemainingWallUnits = UnityEngine.Random.Range(minSizeOfWall, maxSizeOfWall);
@@ -167,12 +160,6 @@ public class MapWalker {
         return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
     }
 
-    private bool IsInInnerBounds(int x, int y) {
-        int gapFromWidthBounds = mapWidth/10;
-        int gapFromHeightBounds = mapHeight/10;
-        return x >= gapFromWidthBounds && x <= mapWidth - gapFromWidthBounds && y >= gapFromHeightBounds && y <= mapHeight - gapFromHeightBounds;
-    }
-
     private bool IsInLeftBounds(int x, int y) {
         int gapFromWidthBounds = mapWidth/10;
         return x < gapFromWidthBounds;
@@ -200,13 +187,5 @@ public class MapWalker {
                 (x >= mapWidth - gapFromWidthBounds && y <= gapFromHeightBounds) || // bottom right
                 (x >= mapWidth - gapFromWidthBounds && y >= mapHeight - gapFromHeightBounds) || // top right
                 (x <= gapFromWidthBounds && y >= mapHeight - gapFromHeightBounds); // top left
-    }
-
-    private void abortEarlyIfUnlucky() {
-        if (UnityEngine.Random.Range(0f, 1f) < 0.1f) {
-            throw new InvalidOperationException($"Became unlucky from outer bounds");
-        } else {
-            UnitsWalkedSoFar -= 10;
-        }
     }
 }
