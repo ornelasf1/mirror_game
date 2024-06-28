@@ -18,13 +18,10 @@ public class MapGenerator : MonoBehaviour
         RectTransform mapZone = gameObject.GetComponent<RectTransform>();
         cellWidth = mapZone.rect.width / GridSize;
         cellHeight = mapZone.rect.height / GridSize;
-        Vector3 pos = wallUnit.transform.localPosition;
-        pos.x = 10;
-        wallUnit.transform.localScale = new Vector3(1, 5, 1);
-        wallUnit.transform.localPosition = pos;
-        mapWalker = new MapWalker(GridSize, GridSize);
+        mapWalker = new MapWalker(GridSize, GridSize, new MapWalkerArgs {
+            MaxNumberOfUnitsToWalkPerWall = 10,
+        });
         initializeGrid();
-        wallUnit.transform.localScale = new Vector3(cellWidth, cellHeight, 1);
         for (int i = 0; i < mapWalker.Grid.Length; i++)
         {
             for (int j = 0; j < mapWalker.Grid[i].Length; j++)

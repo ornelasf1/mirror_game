@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 262352045944006393}
   - component: {fileID: 5089593453666225856}
   - component: {fileID: 7139431647991744756}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Square
   m_TagString: Reflective
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2611782583381938214}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: WallUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}

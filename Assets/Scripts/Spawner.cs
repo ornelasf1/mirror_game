@@ -31,13 +31,13 @@ public class Spawner : MonoBehaviour
             elapsedTime = 0f;
             for (int spawnCount = 0; spawnCount < Random.Range(1, GameStateManager.Instance.LevelData.MaxNumberOfFoesToSpawnAtOnce + 1); spawnCount++)
             {
-                for (int retries = 0; retries < 3; retries++)
+                for (int retries = 0; retries < 10; retries++)
                 {
                     float yPos = Random.Range(spawnZone.rect.yMin, spawnZone.rect.yMax);
                     float xPos = Random.Range(spawnZone.rect.xMin, spawnZone.rect.xMax);
                     Vector3 newWorldPoint = spawnZone.TransformPoint(new Vector3(xPos, yPos, -1f));
                     newWorldPoint.z = -1f;
-                    if (!Physics2D.OverlapCircle(newWorldPoint, 2.5f, 1 << LayerMask.NameToLayer("Foe"))) {
+                    if (!Physics2D.OverlapCircle(newWorldPoint, 2.5f, LayerMask.GetMask("Foe","Obstacle"))) {
                         Instantiate(enemy, newWorldPoint, Quaternion.identity);
                         break;
                     }

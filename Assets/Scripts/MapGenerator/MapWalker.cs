@@ -9,22 +9,30 @@ public enum Direction {
     UP, DOWN, LEFT, RIGHT
 }
 
+public class MapWalkerArgs {
+    public float ChanceToBeginWalking {get; set;} = 0.1f;
+    public int MinSizeOfWall {get; set;} = 6;
+    public int MaxSizeOfWall {get; set;} = 20;
+    public int WallProximityRadius {get; set;} = 15;
+    public int MaxNumberOfUnitsToWalkPerWall {get; set;} = 20;
+}
+
 public class MapWalker {
     private int mapWidth;
     private int mapHeight;
     public int[][] Grid {get; set;}
 
-    private const int maxNumberOfUnitsToWalkPerWall = 20;
+    private int MaxNumberOfUnitsToWalkPerWall = 20;
     private int UnitsWalkedSoFar = 0;
     private float ChanceToBeginWalking = 0.1f;
     private Direction? LastDirection = null;
     private List<(int, int)> WallPositions = new();
-    private const int minSizeOfWall = 6;
-    private const int maxSizeOfWall = 20;
+    private int MinSizeOfWall = 6;
+    private int MaxSizeOfWall = 20;
     private int RemainingWallUnits = 0;
-    private readonly int WallProximityRadius = 15;
-
-    public MapWalker(int mapWidth, int mapHeight) {
+    private int WallProximityRadius = 15;
+    
+    public MapWalker(int mapWidth, int mapHeight, MapWalkerArgs args) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         Grid = new int[mapWidth][];
@@ -32,6 +40,11 @@ public class MapWalker {
         {
             Grid[i] = new int[mapHeight];
         }
+        WallProximityRadius = args.WallProximityRadius;
+        ChanceToBeginWalking = args.ChanceToBeginWalking;
+        MinSizeOfWall = args.MinSizeOfWall;
+        MaxSizeOfWall = args.MaxSizeOfWall;
+        MaxNumberOfUnitsToWalkPerWall = args.MaxNumberOfUnitsToWalkPerWall;
     }
 
     public void AttemptWalking(int x, int y) {
@@ -43,8 +56,8 @@ public class MapWalker {
         try
         {
             BeginWalking(x, y);
-            if (UnitsWalkedSoFar < maxNumberOfUnitsToWalkPerWall) {
-                throw new InvalidOperationException($"Did not meet quota. {UnitsWalkedSoFar}/{maxNumberOfUnitsToWalkPerWall}");
+            if (UnitsWalkedSoFar < MaxNumberOfUnitsToWalkPerWall) {
+                throw new InvalidOperationException($"Did not meet quota. {UnitsWalkedSoFar}/{MaxNumberOfUnitsToWalkPerWall}");
             }
             WallPositions.ForEach(pos => {Grid[pos.Item1][pos.Item2] = 1;});
         }
@@ -69,7 +82,7 @@ public class MapWalker {
             Debug.Log($"Step back from {x},{y}");
             return false;
         }
-        if (UnitsWalkedSoFar > maxNumberOfUnitsToWalkPerWall) {
+        if (UnitsWalkedSoFar > MaxNumberOfUnitsToWalkPerWall) {
             Debug.Log($"Done at {x},{y}");
             return true;
         }
@@ -105,7 +118,7 @@ public class MapWalker {
 
     private Direction GetDirection(int x, int y) {
         if (RemainingWallUnits == 0) {
-            RemainingWallUnits = UnityEngine.Random.Range(minSizeOfWall, maxSizeOfWall);
+            RemainingWallUnits = UnityEngine.Random.Range(MinSizeOfWall, MaxSizeOfWall);
             if (IsInBottomBounds(x, y)) {
                 return Direction.UP;
             } else if (IsInLeftBounds(x, y)) {
