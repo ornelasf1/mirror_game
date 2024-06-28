@@ -20,6 +20,7 @@ public class GameLevelData {
         ActiveLevel++;
         RemainingFoes = CalculateNextFoeAmount(ActiveLevel);
         SecondsTilFoeDetonates = CalculateSecondsTilDetonate(ActiveLevel);
+        MaxNumberOfFoesToSpawnAtOnce = CalculateFoesToSpawn(ActiveLevel);
     }
 
     public void FoeDied() {
@@ -32,5 +33,9 @@ public class GameLevelData {
 
     private float CalculateSecondsTilDetonate(int level) {
         return (float) Math.Max(minSecondsTilFoeDetonate, SecondsTilFoeDetonates - (Math.Pow(level, 1.3f) * 0.1f));
+    }
+
+    private int CalculateFoesToSpawn(int level) {
+        return (int) Math.Floor(30 * Math.Pow(level, 2) / 1000);
     }
 }
