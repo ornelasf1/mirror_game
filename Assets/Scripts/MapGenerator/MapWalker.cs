@@ -1,6 +1,8 @@
 
 
 
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum Direction {
@@ -12,11 +14,12 @@ public class MapWalker {
     private int mapHeight;
     public int[][] Grid {get; set;}
 
-    private const int maxNumberOfUnitsToWalkPerWall = 10;
+    private const int maxNumberOfUnitsToWalkPerWall = 20;
     private int UnitsWalkedSoFar = 0;
     private float chanceToChangeDirection = 0.5f;
     private float ChanceToBeginWalking = 0.05f;
-    private readonly Direction? LastDirection = null;
+    private Direction? LastDirection = null;
+    private List<(int, int)> WallPositions = new();
 
     public MapWalker(int mapWidth, int mapHeight) {
         this.mapWidth = mapWidth;
@@ -29,82 +32,114 @@ public class MapWalker {
     }
 
     public void AttemptWalking(int x, int y) {
-        float value = Random.Range(0f, 1f);
+        float value = UnityEngine.Random.Range(0f, 1f);
         if (value > ChanceToBeginWalking) {
             return;
         }
         Debug.Log($"Start at {x},{y}");
-        BeginWalking(x, y);
-        UnitsWalkedSoFar = 0;
+        try
+        {
+            BeginWalking(x, y);
+            if (UnitsWalkedSoFar < maxNumberOfUnitsToWalkPerWall) {
+                throw new InvalidOperationException($"Did not meet quota. {UnitsWalkedSoFar}/{maxNumberOfUnitsToWalkPerWall}");
+            }
+        }
+        catch (InvalidOperationException msg){
+            Debug.Log(msg);
+            WallPositions.ForEach(pos => {Grid[pos.Item1][pos.Item2] = 0;});
+        }
+        finally {
+            UnitsWalkedSoFar = 0;
+            WallPositions.Clear();
+            LastDirection = null;
+        }
     }
 
     private bool BeginWalking(int x, int y) {
         if (Grid[x][y] == 1) {
             Debug.Log($"Step back from {x},{y}");
-            return true;
+            return false;
         }
         if (UnitsWalkedSoFar > maxNumberOfUnitsToWalkPerWall) {
             Debug.Log($"Done at {x},{y}");
-            return false;
+            return true;
         }
         if (IsInCornerBounds(x, y)) {
-            return false;
+            throw new InvalidOperationException($"Ended up in corner bounds {x} {y}");
         }
 
         if (!IsInBounds(x, y)) {
-            return false;
+            throw new InvalidOperationException($"Went out of bounds {x} {y}");
         }
         
         Direction direction;
         if (IsInBottomBounds(x, y)) {
+            abortEarlyIfUnlucky();
             direction = Direction.UP;
         } else if (IsInLeftBounds(x, y)) {
+            abortEarlyIfUnlucky();
             direction = Direction.RIGHT;
         } else if (IsInRightBounds(x, y)) {
+            abortEarlyIfUnlucky();
             direction = Direction.LEFT;
         } else if (IsInTopBounds(x, y)) {
+            abortEarlyIfUnlucky();
             direction = Direction.DOWN;
         } else {
             direction = ChooseDirection();
         }
-        return Walk(x, y, direction);
+        Walk(x, y, direction);
+        return true;
     }
 
-    public bool Walk(int x, int y, Direction direction) {
+    public void Walk(int x, int y, Direction direction) {
         UnitsWalkedSoFar++;
         Grid[x][y] = 1;
+        WallPositions.Add((x, y));
         Debug.Log($"Set unit in {x},{y}. Go {direction}");
-        bool isNextStepTaken = true;
-        if (isNextStepTaken && direction == Direction.UP) {
-            isNextStepTaken = BeginWalking(x, y+1);
+        bool foundNextSpot = false;
+        Direction newDirection = direction;
+        var directionsToAttempt = new List<Direction>((Direction[])Enum.GetValues(typeof(Direction)));
+        while(!foundNextSpot) {
+            if (newDirection == Direction.UP) {
+                foundNextSpot = BeginWalking(x, y+1);
+            }
+            if (newDirection == Direction.RIGHT) {
+                foundNextSpot = BeginWalking(x+1, y);
+            }
+            if (newDirection == Direction.DOWN) {
+                foundNextSpot = BeginWalking(x, y-1);
+            }
+            if (newDirection == Direction.LEFT) {
+                foundNextSpot = BeginWalking(x-1, y);
+            }
+            if (!foundNextSpot && directionsToAttempt.Count != 0) {
+                newDirection = directionsToAttempt[UnityEngine.Random.Range(0, directionsToAttempt.Count)];
+                directionsToAttempt.Remove(newDirection);
+            } else {
+                break;
+            }
         }
-        if (isNextStepTaken && direction == Direction.RIGHT) {
-            isNextStepTaken = BeginWalking(x+1, y);
+    }
+
+    private bool CheckIfNextStepIsValid(int x, int y) {
+        if (Grid[x][y] == 1) {
+            return false;
         }
-        if (isNextStepTaken && direction == Direction.DOWN) {
-            isNextStepTaken = BeginWalking(x, y-1);
-        }
-        if (isNextStepTaken && direction == Direction.LEFT) {
-            isNextStepTaken = BeginWalking(x-1, y);
-        }
-        return isNextStepTaken;  
+        return true;
     }
 
     private Direction ChooseDirection() {
-        float value = Random.Range(0f, 1f);
-        Direction? newDirection = LastDirection;
-        while(newDirection == LastDirection) {
-            if (value >= 0.75f) {
-                newDirection = Direction.UP;
-            } else if(value >= 0.5f) {
-                newDirection = Direction.LEFT;
-            } else if(value >= 0.25f) {
-                newDirection = Direction.RIGHT;
-            } else {
-                newDirection = Direction.DOWN;
-            }
+        float value = UnityEngine.Random.Range(0f, 1f);
+        if (value >= 0.75f) {
+            return Direction.UP;
+        } else if(value >= 0.5f) {
+            return Direction.LEFT;
+        } else if(value >= 0.25f) {
+            return Direction.RIGHT;
+        } else {
+            return Direction.DOWN;
         }
-        return (Direction) newDirection;
     }
 
     private bool IsInBounds(int x, int y) {
@@ -144,5 +179,13 @@ public class MapWalker {
                 (x >= mapWidth - gapFromWidthBounds && y <= gapFromHeightBounds) || // bottom right
                 (x >= mapWidth - gapFromWidthBounds && y >= mapHeight - gapFromHeightBounds) || // top right
                 (x <= gapFromWidthBounds && y >= mapHeight - gapFromHeightBounds); // top left
+    }
+
+    private void abortEarlyIfUnlucky() {
+        if (UnityEngine.Random.Range(0f, 1f) < 0.1f) {
+            throw new InvalidOperationException($"Became unlucky from outer bounds");
+        } else {
+            UnitsWalkedSoFar -= 10;
+        }
     }
 }
