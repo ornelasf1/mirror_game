@@ -62,7 +62,10 @@ public class MapGenerator : MonoBehaviour
                 if (mapWalker.Grid[i][j] == 1) {
                     Debug.Log($"Spawn at x:{(i+1) * cellWidth} y:{(j+1) * cellHeight}");
                     Vector3 wallPos = new Vector3((i+1) * cellWidth, (j+1) * cellHeight, 0);
-                    Instantiate(wallUnit, transform.TransformPoint(wallPos), Quaternion.identity, transform);
+                    Collider2D collider = Physics2D.OverlapPoint(transform.TransformPoint(wallPos), 1 << LayerMask.NameToLayer("SpawnFreeZone"));
+                    if (!collider) {
+                        Instantiate(wallUnit, transform.TransformPoint(wallPos), Quaternion.identity, transform);
+                    }
                 }
             }
         }
