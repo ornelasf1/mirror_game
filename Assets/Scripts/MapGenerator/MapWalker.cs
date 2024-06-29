@@ -22,6 +22,8 @@ public class MapWalker {
     private int mapHeight;
     public int[][] Grid {get; set;}
 
+    public MapWalkerArgs MapWalkerArgs {get;}
+
     private int MaxNumberOfUnitsToWalkPerWall = 20;
     private int UnitsWalkedSoFar = 0;
     private float ChanceToBeginWalking = 0.1f;
@@ -33,6 +35,7 @@ public class MapWalker {
     private int WallProximityRadius = 15;
     
     public MapWalker(int mapWidth, int mapHeight, MapWalkerArgs args) {
+        MapWalkerArgs = args;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         Grid = new int[mapWidth][];

@@ -882,9 +882,9 @@ GameObject:
   m_Component:
   - component: {fileID: 511090630}
   - component: {fileID: 511090631}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SpawnFreeZone
-  m_TagString: Untagged
+  m_TagString: SpawnFreeZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

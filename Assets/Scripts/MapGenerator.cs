@@ -6,21 +6,24 @@ using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
     public GameObject wallUnit;
-    private readonly int GridSize = 60;
+    private int GridSize = 60;
 
     private float cellWidth;
     private float cellHeight;
+    private RectTransform mapZone;
     private MapWalker mapWalker;
+    private MapWalkerArgs currentArgs;
 
     // Start is called before the first frame update
     void Start()
     {
-        RectTransform mapZone = gameObject.GetComponent<RectTransform>();
+        mapZone = gameObject.GetComponent<RectTransform>();
         cellWidth = mapZone.rect.width / GridSize;
         cellHeight = mapZone.rect.height / GridSize;
         mapWalker = new MapWalker(GridSize, GridSize, new MapWalkerArgs {
             MaxNumberOfUnitsToWalkPerWall = 10,
         });
+        currentArgs = mapWalker.MapWalkerArgs;
         InitializeGrid();
         InstantiateWalls();
         GameStateManager.Instance.LevelData.onNewLevel += RedrawMap;
@@ -83,9 +86,17 @@ public class MapGenerator : MonoBehaviour
 
     private void RedrawMap(int newLevel) {
         CleanUpWalls();
+        GridSize += 2;
+        cellWidth = mapZone.rect.width / GridSize;
+        cellHeight = mapZone.rect.height / GridSize;
         mapWalker = new MapWalker(GridSize, GridSize, new MapWalkerArgs {
-            MaxNumberOfUnitsToWalkPerWall = 10,
+            MaxNumberOfUnitsToWalkPerWall = currentArgs.MaxNumberOfUnitsToWalkPerWall + 1,
+            WallProximityRadius = Math.Max(5, currentArgs.WallProximityRadius - 1),
+            MaxSizeOfWall = currentArgs.MaxSizeOfWall + 2,
+            MinSizeOfWall = currentArgs.MinSizeOfWall + 2,
+            ChanceToBeginWalking = currentArgs.ChanceToBeginWalking + 0.02f,
         });
+        currentArgs = mapWalker.MapWalkerArgs;
         InitializeGrid();
         InstantiateWalls();
     }
