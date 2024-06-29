@@ -8,7 +8,7 @@ public class GameOver : MonoBehaviour
 
     public void ShowGameOver() {
         gameObject.SetActive(true);
-        scoreText.text = $"Score {GameStateManager.Instance.gameData.EnemyKills}";
+        scoreText.text = $"Score {GameStateManager.Instance.gameData.Score}";
         GameStateManager.Instance.gameData.IsGameActive = false;
     }
 

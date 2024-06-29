@@ -9,8 +9,11 @@ public class GameLevelData {
     public int MaxNumberOfFoesToSpawnAtOnce { get; private set; } = 1;
 
     private const int maxAmountOfFoesInALevel = 50;
-    private const int minAmountOfFoesToSpawnInALevel = 10;
+    private const int minAmountOfFoesToSpawnInALevel = 1;
     private const float minSecondsTilFoeDetonate = 3f;
+
+    public delegate void OnNewLevel(int newLevel);
+    public OnNewLevel onNewLevel;
 
     public GameLevelData() {
         RemainingFoes = minAmountOfFoesToSpawnInALevel;
@@ -21,6 +24,7 @@ public class GameLevelData {
         RemainingFoes = CalculateNextFoeAmount(ActiveLevel);
         SecondsTilFoeDetonates = CalculateSecondsTilDetonate(ActiveLevel);
         MaxNumberOfFoesToSpawnAtOnce = CalculateFoesToSpawn(ActiveLevel);
+        onNewLevel?.Invoke(ActiveLevel);
     }
 
     public void FoeDied() {

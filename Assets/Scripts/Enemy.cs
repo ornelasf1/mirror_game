@@ -9,24 +9,26 @@ public class Enemy : MonoBehaviour
 {
     public Gradient gradient;
     SpriteRenderer spriteRenderer;
-    [HideInInspector] public TextMeshProUGUI scoreTMP;
+    public GameObject prefabPlusScoreAnimationText;
     private readonly int maxHealth = 100;
     private float currentHealth;
     private readonly float healthDamageMultiplier = 100f;
     private float bombTimer = 1f;
-    public int bombDamage = 5;
+    private int bombDamage = 10;
     private HealthBar userHealthBar;
     private Transform enemyHealthBar;
     private readonly float disappearHealthBarInSeconds = 1f;
     private float disappearHealthBarElapsed = 0f;
     private int gainPointsPerSecond = 10;
     private int pointsForKilling = 5;
+    private GameObject scoreUI;
 
     void Start() {
         currentHealth = maxHealth;
         spriteRenderer = GetComponent<SpriteRenderer>();
         userHealthBar = GameObject.FindGameObjectWithTag("UserHealth").GetComponent<HealthBar>();
         GameObject enemyHealthBarGO = Helpers.FindGameObjectInChildWithTag(transform.gameObject, "EnemyHealth");
+        scoreUI = GameObject.FindGameObjectWithTag("ScoreUI");
         if (enemyHealthBarGO != null) {
             enemyHealthBar = enemyHealthBarGO.GetComponent<Transform>();
             enemyHealthBar.transform.parent.gameObject.SetActive(false);
@@ -70,8 +72,8 @@ public class Enemy : MonoBehaviour
         if (currentHealth <= 0) {
             Destroy(gameObject);
             GameStateManager.Instance.IncreaseKill();
-            GameStateManager.Instance.IncreaseScore(pointsForKilling);
             GameStateManager.Instance.LevelData.FoeDied();
+            GivePlayerKillPoints();
         }
     }
 
@@ -85,5 +87,10 @@ public class Enemy : MonoBehaviour
             }
             disappearHealthBarElapsed = disappearHealthBarInSeconds;
         }
+    }
+
+    private void GivePlayerKillPoints() {
+        GameStateManager.Instance.IncreaseScore(pointsForKilling);
+        Instantiate(prefabPlusScoreAnimationText, scoreUI.transform);
     }
 }

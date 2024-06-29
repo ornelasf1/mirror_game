@@ -21,18 +21,9 @@ public class MapGenerator : MonoBehaviour
         mapWalker = new MapWalker(GridSize, GridSize, new MapWalkerArgs {
             MaxNumberOfUnitsToWalkPerWall = 10,
         });
-        initializeGrid();
-        for (int i = 0; i < mapWalker.Grid.Length; i++)
-        {
-            for (int j = 0; j < mapWalker.Grid[i].Length; j++)
-            {
-                if (mapWalker.Grid[i][j] == 1) {
-                    Debug.Log($"Spawn at x:{(i+1) * cellWidth} y:{(j+1) * cellHeight}");
-                    Vector3 wallPos = new Vector3((i+1) * cellWidth, (j+1) * cellHeight, 0);
-                    Instantiate(wallUnit, transform.TransformPoint(wallPos), Quaternion.identity, transform);
-                }
-            }
-        }
+        InitializeGrid();
+        InstantiateWalls();
+        GameStateManager.Instance.LevelData.onNewLevel += RedrawMap;
     }
 
     // Update is called once per frame
@@ -40,7 +31,7 @@ public class MapGenerator : MonoBehaviour
     {
     }
 
-    private void initializeGrid()
+    private void InitializeGrid()
     {
 
         for (int y = 0; y < GridSize; y++)
@@ -48,15 +39,6 @@ public class MapGenerator : MonoBehaviour
             for (int x = 0; x < GridSize; x++)
             {
                 mapWalker.AttemptWalking(x, y);
-                // GameObject newCell = Instantiate(gridCell, new Vector3(
-                //     transform.position.x + (i * cellWidth), 
-                //     transform.position.y + (j * cellHeight), 
-                //     transform.position.z), Quaternion.identity, transform);
-                // GameObject newCell = Instantiate(gridCell, new Vector3(
-                //     j * cellWidth, 
-                //     i * cellHeight, 
-                //     transform.position.z), Quaternion.identity, transform);
-                // newCell.GetComponent<SpriteRenderer>().name = $"Cell-{i}-{j}";
             }
         }
         string result = "";
@@ -70,5 +52,38 @@ public class MapGenerator : MonoBehaviour
             result += line + "|";
         }
         Debug.Log(result);
+    }
+
+    private void InstantiateWalls() {
+        for (int i = 0; i < mapWalker.Grid.Length; i++)
+        {
+            for (int j = 0; j < mapWalker.Grid[i].Length; j++)
+            {
+                if (mapWalker.Grid[i][j] == 1) {
+                    Debug.Log($"Spawn at x:{(i+1) * cellWidth} y:{(j+1) * cellHeight}");
+                    Vector3 wallPos = new Vector3((i+1) * cellWidth, (j+1) * cellHeight, 0);
+                    Instantiate(wallUnit, transform.TransformPoint(wallPos), Quaternion.identity, transform);
+                }
+            }
+        }
+    }
+
+    private void CleanUpWalls() {
+        Transform[] children = gameObject.GetComponentsInChildren<Transform>();
+        foreach (var child in children)
+        {
+            if (child.gameObject.layer == LayerMask.NameToLayer("Obstacle")) {
+                Destroy(child.gameObject);
+            }
+        }
+    }
+
+    private void RedrawMap(int newLevel) {
+        CleanUpWalls();
+        mapWalker = new MapWalker(GridSize, GridSize, new MapWalkerArgs {
+            MaxNumberOfUnitsToWalkPerWall = 10,
+        });
+        InitializeGrid();
+        InstantiateWalls();
     }
 }

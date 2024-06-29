@@ -9,6 +9,7 @@ public class Shooter : MonoBehaviour
     public Material material;
     public HealthBar healthBar;
     [SerializeField] private LayerMask layerThatIgnoresLaser;
+    private float damageMultiplier = 10f;
 
     void Start() {
         Vector3 laserStartPosition = Camera.main.ViewportToWorldPoint(new Vector3(1, 0.7f, 0));
@@ -35,6 +36,7 @@ public class Shooter : MonoBehaviour
     }
 
     public void DealSelfDamage(int damage) {
-        healthBar.DealDamage(damage * Time.deltaTime * 10f);
+        healthBar.DealDamage(damage * Time.deltaTime * damageMultiplier);
+
     }
 }
