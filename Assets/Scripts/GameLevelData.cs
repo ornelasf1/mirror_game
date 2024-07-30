@@ -5,11 +5,11 @@ public class GameLevelData {
     public int ActiveLevel { get; private set; } = 1;
     public int RemainingFoes { get; private set; }
     public float SecondsTilFoeDetonates { get; private set; } = 10f;
-    public float IntervalForFoeSpawnInMs { get; private set; } = 5000f;
+    public float IntervalForFoeSpawnInMs { get; private set; } = 3000f;
     public int MaxNumberOfFoesToSpawnAtOnce { get; private set; } = 1;
 
     private const int maxAmountOfFoesInALevel = 50;
-    private const int minAmountOfFoesToSpawnInALevel = 1    ;
+    private const int minAmountOfFoesToSpawnInALevel = 10;
     private const float minSecondsTilFoeDetonate = 3f;
 
     public delegate void OnNewLevel(int newLevel);
@@ -24,6 +24,7 @@ public class GameLevelData {
         RemainingFoes = CalculateNextFoeAmount(ActiveLevel);
         SecondsTilFoeDetonates = CalculateSecondsTilDetonate(ActiveLevel);
         MaxNumberOfFoesToSpawnAtOnce = CalculateFoesToSpawn(ActiveLevel);
+        IntervalForFoeSpawnInMs = CalculateIntervalForFoeSpawnInMs(ActiveLevel);
         onNewLevel?.Invoke(ActiveLevel);
     }
 
@@ -41,5 +42,9 @@ public class GameLevelData {
 
     private int CalculateFoesToSpawn(int level) {
         return (int) Math.Floor(30 * Math.Pow(level, 2) / 1000);
+    }
+
+    private float CalculateIntervalForFoeSpawnInMs(int level) {
+        return IntervalForFoeSpawnInMs - 100f;
     }
 }

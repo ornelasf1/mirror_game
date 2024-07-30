@@ -14,7 +14,7 @@ public class Enemy : MonoBehaviour
     private float currentHealth;
     private readonly float healthDamageMultiplier = 100f;
     private float bombTimer = 1f;
-    private int bombDamage = 10;
+    private int bombDamage = 20;
     private HealthBar userHealthBar;
     private Transform enemyHealthBar;
     private readonly float disappearHealthBarInSeconds = 1f;

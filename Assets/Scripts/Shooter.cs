@@ -11,7 +11,7 @@ public class Shooter : MonoBehaviour
     [SerializeField] private LayerMask layerThatIgnoresLaser;
     private float damageMultiplier = 10f;
 
-    void Start() {
+    void Awake() {
         Vector3 laserStartPosition = Camera.main.ViewportToWorldPoint(new Vector3(1, 0.7f, 0));
         transform.position = new Vector3(laserStartPosition.x, laserStartPosition.y, 0);
     }

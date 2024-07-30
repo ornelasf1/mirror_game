@@ -11,7 +11,6 @@ TagManager:
   - InventoryCell
   - Inventory
   - ScoreUI
-  - SpawnFreeZone
   layers:
   - Default
   - TransparentFX
@@ -27,7 +26,7 @@ TagManager:
   - Item
   - Foe
   - Obstacle
-  - 
+  - SpawnFreeZone
   - 
   - 
   - 

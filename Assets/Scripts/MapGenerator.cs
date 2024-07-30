@@ -6,7 +6,7 @@ using UnityEngine;
 public class MapGenerator : MonoBehaviour
 {
     public GameObject wallUnit;
-    private int GridSize = 60;
+    private int GridSize = 100;
 
     private float cellWidth;
     private float cellHeight;
@@ -22,6 +22,7 @@ public class MapGenerator : MonoBehaviour
         cellHeight = mapZone.rect.height / GridSize;
         mapWalker = new MapWalker(GridSize, GridSize, new MapWalkerArgs {
             MaxNumberOfUnitsToWalkPerWall = 10,
+            WallProximityRadius = 40,
         });
         currentArgs = mapWalker.MapWalkerArgs;
         InitializeGrid();
