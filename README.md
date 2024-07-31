@@ -3,5 +3,7 @@ Small casual mobile game where players have to reflect the laser to aim and dest
 
 View the meat and potatoes of the Game Object scripts in the [Assets/Scripts](https://github.com/ornelasf1/mirror_game/tree/cab3017538c1abace779f6a1d9f924d26dea6c19/Assets/Scripts) directory.
 
+Developed with **Unity** and **C#**
+
 # Demo
 ![mirror game gif](https://github.com/ornelasf1/mirror_game/blob/cab3017538c1abace779f6a1d9f924d26dea6c19/mirrorgame.gif)
